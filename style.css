@@ -272,9 +272,10 @@ input, textarea, select { font: inherit; }
   backdrop-filter: blur(4px);
   z-index: 998;
   opacity: 0;
+  pointer-events: none;
   transition: opacity var(--transition);
 }
-.nav-overlay.active { opacity: 1; }
+.nav-overlay.active { opacity: 1; pointer-events: auto; }
 
 /* ============================================================
    HERO
@@ -297,6 +298,7 @@ input, textarea, select { font: inherit; }
   border-radius: 50%;
   filter: blur(80px);
   opacity: 0.5;
+  pointer-events: none;
 }
 .orb-1 {
   width: 600px; height: 600px;
@@ -323,6 +325,7 @@ input, textarea, select { font: inherit; }
     linear-gradient(rgba(56,182,255,.04) 1px, transparent 1px),
     linear-gradient(90deg, rgba(56,182,255,.04) 1px, transparent 1px);
   background-size: 50px 50px;
+  pointer-events: none;
 }
 
 @keyframes float1 {
@@ -692,6 +695,35 @@ input, textarea, select { font: inherit; }
   font-size: 0.93rem;
   color: var(--text-body);
   line-height: 1.7;
+}
+
+/* About — simplified single-column layout */
+.about-simple {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* About — Know More CTA strip */
+.about-cta-strip {
+  margin-top: 56px;
+  background: linear-gradient(135deg, rgba(17,76,191,.07) 0%, rgba(56,182,255,.07) 100%);
+  border: 1.5px solid rgba(56,182,255,.2);
+  border-radius: var(--radius-lg);
+  padding: 32px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.about-cta-strip p {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0;
+}
+@media (max-width: 600px) {
+  .about-cta-strip { flex-direction: column; align-items: flex-start; padding: 24px 20px; }
 }
 
 /* ============================================================
