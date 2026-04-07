@@ -1263,8 +1263,9 @@ input, textarea, select { font: inherit; }
    ============================================================ */
 .reveal {
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  -webkit-transform: translateY(24px);
 }
 .reveal.visible {
   opacity: 1;
@@ -1331,12 +1332,14 @@ input, textarea, select { font: inherit; }
     gap: 0;
     padding: 90px 20px 32px;
     transform: translateX(110%);
+    -webkit-transform: translateX(110%);
     transition: transform var(--transition-slow);
+    -webkit-transition: -webkit-transform var(--transition-slow);
     z-index: 999;
     overflow-y: auto;
     box-shadow: -12px 0 40px rgba(0,0,0,.4);
   }
-  .nav-menu.open { transform: translateX(0); }
+  .nav-menu.open { transform: translateX(0); -webkit-transform: translateX(0); }
 
   .nav-link {
     display: block;
@@ -1377,6 +1380,23 @@ input, textarea, select { font: inherit; }
   /* Footer */
   .footer-grid { grid-template-columns: 1fr; gap: 32px; }
   .footer-bottom .container { flex-direction: column; text-align: center; }
+}
+
+/* ============================================================
+   MOBILE — Fix reveal animation thresholds
+   ============================================================ */
+@media (max-width: 768px) {
+  .reveal {
+    transform: translateY(16px);
+    -webkit-transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  /* Remove all stagger delays on mobile — single column, no need */
+  .services-grid .reveal,
+  .why-grid .reveal,
+  .process-list .reveal {
+    transition-delay: 0s !important;
+  }
 }
 
 /* ============================================================

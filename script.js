@@ -123,6 +123,7 @@
   const els = document.querySelectorAll('.reveal');
   if (!els.length) return;
 
+  const isMobile = window.innerWidth <= 768;
   const observer = new IntersectionObserver(
     entries => {
       entries.forEach(entry => {
@@ -132,7 +133,10 @@
         }
       });
     },
-    { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+    {
+      threshold: isMobile ? 0.05 : 0.12,
+      rootMargin: isMobile ? '0px 0px 0px 0px' : '0px 0px -40px 0px'
+    }
   );
 
   els.forEach(el => observer.observe(el));
