@@ -120,37 +120,28 @@
    3. SCROLL REVEAL — intersection observer
    ============================================================ */
 (function initReveal() {
-  const els = document.querySelectorAll('.reveal');
+  let els = Array.from(document.querySelectorAll('.reveal'));
   if (!els.length) return;
 
-  const isMobile = window.innerWidth <= 768;
-
-  const observer = new IntersectionObserver(
-    entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    {
-      threshold: 0.01,
-      rootMargin: isMobile ? '0px 0px 80px 0px' : '0px 0px -40px 0px'
+  function checkReveal() {
+    const vh = window.innerHeight;
+    els = els.filter(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < vh + 80) {
+        el.classList.add('visible');
+        return false; // remove from pending list
+      }
+      return true;
+    });
+    if (els.length === 0) {
+      window.removeEventListener('scroll', checkReveal);
     }
-  );
+  }
 
-  /* Key fix: elements already in/near the viewport at page load are
-     immediately marked visible — iOS Safari & Android often miss the
-     initial IntersectionObserver callback for these elements. */
-  els.forEach(el => {
-    const rect = el.getBoundingClientRect();
-    if (rect.top < window.innerHeight + 80) {
-      el.classList.add('visible');
-    } else {
-      observer.observe(el);
-    }
-  });
+  // Run immediately on load
+  checkReveal();
+  // Run on every scroll (covers nav link jumps, smooth scroll, swipe)
+  window.addEventListener('scroll', checkReveal, { passive: true });
 })();
 
 
