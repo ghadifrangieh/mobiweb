@@ -1262,16 +1262,25 @@ input, textarea, select { font: inherit; }
 /* ============================================================
    SCROLL REVEAL ANIMATIONS
    ============================================================ */
-.reveal {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-  will-change: opacity, transform;
+/* Reveal animation — desktop/mouse only */
+@media (hover: hover) {
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
-  will-change: auto;
+
+/* Touch devices (iOS, Android) — show everything immediately, no JS needed */
+@media (hover: none) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* Stagger children */

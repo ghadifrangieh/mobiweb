@@ -98,7 +98,7 @@
 
 
 /* ============================================================
-   3. SCROLL REVEAL — reliable on all mobile browsers
+   3. SCROLL REVEAL — iOS Safari safe
    ============================================================ */
 var revealEls = Array.from(document.querySelectorAll('.reveal'));
 
@@ -106,8 +106,7 @@ function checkReveal() {
   if (!revealEls.length) return;
   var vh = window.innerHeight;
   revealEls = revealEls.filter(function(el) {
-    var top = el.getBoundingClientRect().top;
-    if (top < vh + 60) {
+    if (el.getBoundingClientRect().top < vh + 60) {
       el.classList.add('visible');
       return false;
     }
@@ -115,12 +114,33 @@ function checkReveal() {
   });
 }
 
-// Run on scroll
+// Desktop / Android: scroll events fire reliably
 window.addEventListener('scroll', checkReveal, { passive: true });
 
-// Run on load and after fonts/images settle
+// iOS Safari: scroll events are sparse during momentum scrolling.
+// After touchend, poll every rAF frame until all elements are revealed.
+var rafId = null;
+function stopRaf() { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } }
+function startRaf() {
+  stopRaf();
+  function loop() {
+    checkReveal();
+    if (revealEls.length > 0) {
+      rafId = requestAnimationFrame(loop);
+    } else {
+      rafId = null;
+    }
+  }
+  rafId = requestAnimationFrame(loop);
+}
+// touchmove covers slow finger drags on iOS
+document.addEventListener('touchmove', checkReveal, { passive: true });
+// touchend starts rAF loop to catch momentum scrolling
+document.addEventListener('touchend', startRaf, { passive: true });
+
+// Run on load and after everything settles
 checkReveal();
-window.addEventListener('load', checkReveal);
+window.addEventListener('load', function() { checkReveal(); startRaf(); });
 
 
 /* ============================================================
@@ -137,14 +157,8 @@ window.addEventListener('load', checkReveal);
       var navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--navbar-h')) || 76;
       var top = target.getBoundingClientRect().top + window.scrollY - navH;
       window.scrollTo({ top: top, behavior: 'smooth' });
-
-      /* iOS Safari doesn't fire scroll events during smooth scroll.
-         Poll checkReveal every 80ms for 1.2s after any nav click. */
-      var polls = 0;
-      var timer = setInterval(function() {
-        checkReveal();
-        if (++polls >= 15) clearInterval(timer);
-      }, 80);
+      // Kick off rAF polling immediately after nav tap
+      startRaf();
     });
   });
 })();
