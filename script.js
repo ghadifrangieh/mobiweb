@@ -98,50 +98,55 @@
 
 
 /* ============================================================
-   2. SMOOTH SCROLL — override for anchor links
+   3. SCROLL REVEAL — reliable on all mobile browsers
    ============================================================ */
-(function initSmoothScroll() {
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-      const targetId = this.getAttribute('href');
-      if (targetId === '#') return;
-      const target = document.querySelector(targetId);
-      if (!target) return;
-      e.preventDefault();
-      const navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--navbar-h')) || 76;
-      const top  = target.getBoundingClientRect().top + window.scrollY - navH;
-      window.scrollTo({ top, behavior: 'smooth' });
-    });
+var revealEls = Array.from(document.querySelectorAll('.reveal'));
+
+function checkReveal() {
+  if (!revealEls.length) return;
+  var vh = window.innerHeight;
+  revealEls = revealEls.filter(function(el) {
+    var top = el.getBoundingClientRect().top;
+    if (top < vh + 60) {
+      el.classList.add('visible');
+      return false;
+    }
+    return true;
   });
-})();
+}
+
+// Run on scroll
+window.addEventListener('scroll', checkReveal, { passive: true });
+
+// Run on load and after fonts/images settle
+checkReveal();
+window.addEventListener('load', checkReveal);
 
 
 /* ============================================================
-   3. SCROLL REVEAL — intersection observer
+   2. SMOOTH SCROLL — override for anchor links
    ============================================================ */
-(function initReveal() {
-  let els = Array.from(document.querySelectorAll('.reveal'));
-  if (!els.length) return;
+(function initSmoothScroll() {
+  document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+    anchor.addEventListener('click', function(e) {
+      var targetId = this.getAttribute('href');
+      if (targetId === '#') return;
+      var target = document.querySelector(targetId);
+      if (!target) return;
+      e.preventDefault();
+      var navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--navbar-h')) || 76;
+      var top = target.getBoundingClientRect().top + window.scrollY - navH;
+      window.scrollTo({ top: top, behavior: 'smooth' });
 
-  function checkReveal() {
-    const vh = window.innerHeight;
-    els = els.filter(el => {
-      const rect = el.getBoundingClientRect();
-      if (rect.top < vh + 80) {
-        el.classList.add('visible');
-        return false; // remove from pending list
-      }
-      return true;
+      /* iOS Safari doesn't fire scroll events during smooth scroll.
+         Poll checkReveal every 80ms for 1.2s after any nav click. */
+      var polls = 0;
+      var timer = setInterval(function() {
+        checkReveal();
+        if (++polls >= 15) clearInterval(timer);
+      }, 80);
     });
-    if (els.length === 0) {
-      window.removeEventListener('scroll', checkReveal);
-    }
-  }
-
-  // Run immediately on load
-  checkReveal();
-  // Run on every scroll (covers nav link jumps, smooth scroll, swipe)
-  window.addEventListener('scroll', checkReveal, { passive: true });
+  });
 })();
 
 

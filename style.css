@@ -745,7 +745,8 @@ input, textarea, select { font: inherit; }
   transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
   position: relative;
   overflow: hidden;
-  cursor: default;
+  cursor: pointer;
+  touch-action: manipulation;
 }
 .service-card::before {
   content: '';
@@ -1384,7 +1385,7 @@ input, textarea, select { font: inherit; }
 }
 
 /* ============================================================
-   MOBILE — Fix reveal animation thresholds
+   MOBILE — Fix reveal animation thresholds + touch active states
    ============================================================ */
 @media (max-width: 768px) {
   .reveal {
@@ -1397,6 +1398,44 @@ input, textarea, select { font: inherit; }
   .why-grid .reveal,
   .process-list .reveal {
     transition-delay: 0s !important;
+  }
+
+  /* Touch active states — mirror hover effects for tap feedback */
+  .service-card:active {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+    border-color: rgba(56,182,255,.3);
+  }
+  .service-card:active::before { transform: scaleX(1); }
+  .service-card:active .sc-icon {
+    background: var(--gradient);
+    color: var(--white);
+    box-shadow: var(--shadow-blue);
+  }
+
+  .process-step:active {
+    transform: translateY(-6px);
+    background: rgba(56,182,255,.06);
+  }
+  .process-step:active .ps-icon {
+    background: var(--gradient);
+    color: var(--white);
+    box-shadow: var(--shadow-blue);
+  }
+
+  .mv-card:active {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .why-card:active {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(56,182,255,.3);
+  }
+  .why-card:active .wc-icon {
+    background: var(--gradient);
+    color: var(--white);
   }
 }
 
