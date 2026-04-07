@@ -124,6 +124,7 @@
   if (!els.length) return;
 
   const isMobile = window.innerWidth <= 768;
+
   const observer = new IntersectionObserver(
     entries => {
       entries.forEach(entry => {
@@ -134,12 +135,22 @@
       });
     },
     {
-      threshold: isMobile ? 0.05 : 0.12,
-      rootMargin: isMobile ? '0px 0px 0px 0px' : '0px 0px -40px 0px'
+      threshold: 0.01,
+      rootMargin: isMobile ? '0px 0px 80px 0px' : '0px 0px -40px 0px'
     }
   );
 
-  els.forEach(el => observer.observe(el));
+  /* Key fix: elements already in/near the viewport at page load are
+     immediately marked visible — iOS Safari & Android often miss the
+     initial IntersectionObserver callback for these elements. */
+  els.forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight + 80) {
+      el.classList.add('visible');
+    } else {
+      observer.observe(el);
+    }
+  });
 })();
 
 
