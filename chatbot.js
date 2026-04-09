@@ -230,7 +230,7 @@
   var style = document.createElement('style');
   style.textContent = [
     /* Toggle button */
-    '.cb-toggle{position:fixed;bottom:90px;right:28px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#38B6FF 0%,#114CBF 100%);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(56,182,255,.45);z-index:900;transition:transform .25s ease,box-shadow .25s ease;}',
+    '.cb-toggle{position:fixed;bottom:90px;right:28px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#38B6FF 0%,#114CBF 100%);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(56,182,255,.45);z-index:1100;transition:transform .25s ease,box-shadow .25s ease;}',
     '.cb-toggle:hover{transform:scale(1.08);box-shadow:0 8px 32px rgba(56,182,255,.55);}',
     '.cb-toggle svg{transition:transform .25s ease;}',
     '.cb-toggle.open svg.icon-chat{display:none;}',
@@ -238,9 +238,12 @@
     /* Badge */
     '.cb-badge{position:absolute;top:-4px;right:-4px;width:18px;height:18px;background:#e53e3e;border-radius:50%;font-size:10px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(0);transition:opacity .2s,transform .2s;}',
     '.cb-badge.show{opacity:1;transform:scale(1);}',
-    /* Window */
-    '.cb-window{position:fixed;bottom:158px;right:28px;width:360px;max-width:calc(100vw - 32px);height:520px;max-height:calc(100vh - 180px);background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(11,31,94,.2);display:flex;flex-direction:column;overflow:hidden;z-index:900;opacity:0;transform:translateY(16px) scale(.97);transition:opacity .3s ease,transform .3s ease;pointer-events:none;}',
-    '.cb-window.open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}',
+    /* Backdrop */
+    '.cb-backdrop{position:fixed;inset:0;background:rgba(8,15,46,.45);z-index:1099;opacity:0;transition:opacity .3s ease;pointer-events:none;}',
+    '.cb-backdrop.open{opacity:1;pointer-events:auto;}',
+    /* Window — centered on screen */
+    '.cb-window{position:fixed;top:50%;left:50%;transform:translate(-50%,-46%) scale(.97);width:400px;max-width:calc(100vw - 24px);height:560px;max-height:calc(100vh - 100px);background:#fff;border-radius:20px;box-shadow:0 24px 80px rgba(11,31,94,.25);display:flex;flex-direction:column;overflow:hidden;z-index:1100;opacity:0;transition:opacity .3s ease,transform .3s ease;pointer-events:none;}',
+    '.cb-window.open{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto;}',
     /* Header */
     '.cb-header{padding:18px 20px;background:linear-gradient(135deg,#0B1F5E 0%,#114CBF 100%);color:#fff;display:flex;align-items:center;gap:12px;flex-shrink:0;}',
     '.cb-avatar{width:40px;height:40px;border-radius:50%;background:rgba(56,182,255,.25);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}',
@@ -299,6 +302,11 @@
   ].join('');
   document.body.appendChild(toggle);
 
+  /* Backdrop */
+  var backdrop = document.createElement('div');
+  backdrop.className = 'cb-backdrop';
+  document.body.appendChild(backdrop);
+
   /* Chat window */
   var win = document.createElement('div');
   win.className = 'cb-window';
@@ -343,6 +351,7 @@
     isOpen = true;
     toggle.classList.add('open');
     win.classList.add('open');
+    backdrop.classList.add('open');
     toggle.setAttribute('aria-label', 'Close Business Assistant');
     badge.classList.remove('show');
     if (!hasOpened) {
@@ -356,6 +365,7 @@
     isOpen = false;
     toggle.classList.remove('open');
     win.classList.remove('open');
+    backdrop.classList.remove('open');
     toggle.setAttribute('aria-label', 'Open Business Assistant');
   }
 
@@ -363,6 +373,7 @@
     isOpen ? closeChat() : openChat();
   });
   closeBtn.addEventListener('click', closeChat);
+  backdrop.addEventListener('click', closeChat);
 
   /* Show badge after 3s to nudge first-time visitors */
   setTimeout(function () {
