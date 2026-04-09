@@ -1262,25 +1262,19 @@ input, textarea, select { font: inherit; }
 /* ============================================================
    SCROLL REVEAL ANIMATIONS
    ============================================================ */
-/* Reveal animation — desktop/mouse only */
-@media (hover: hover) {
-  .reveal {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Reveal — visible by default. Only hidden when JS confirms desktop hover device. */
+.reveal {
+  opacity: 1;
+  transform: none;
 }
-
-/* Touch devices (iOS, Android) — show everything immediately, no JS needed */
-@media (hover: none) {
-  .reveal {
-    opacity: 1;
-    transform: none;
-  }
+body.has-hover .reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+body.has-hover .reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* Stagger children */

@@ -5,6 +5,15 @@
 
 'use strict';
 
+/* Add has-hover class ONLY on real pointer devices (desktop).
+   Touch devices never get it — so .reveal stays visible by default in CSS. */
+if (window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+  document.documentElement.classList.add('has-hover');
+  document.addEventListener('DOMContentLoaded', function() {
+    document.body.classList.add('has-hover');
+  });
+}
+
 /* ============================================================
    1. NAVBAR — Scroll effect + Active link highlighting
    ============================================================ */
@@ -103,7 +112,7 @@
 var revealEls = Array.from(document.querySelectorAll('.reveal'));
 
 function checkReveal() {
-  if (!revealEls.length) return;
+  if (!revealEls.length || !document.body.classList.contains('has-hover')) return;
   var vh = window.innerHeight;
   revealEls = revealEls.filter(function(el) {
     if (el.getBoundingClientRect().top < vh + 60) {
